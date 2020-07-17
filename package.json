@@ -1,0 +1,28 @@
+{
+  "name": "iot-node-serial",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "clean_dist": "rm -rf dist/",
+    "post_build": "cp -r src/public dist/",
+    "build": "npm run clean_dist && tsc && yarn post_build",
+    "watch": "tsc-watch --onSuccess \"node ./dist/server.js\""
+  },
+  "devDependencies": {
+    "tsc-watch": "^4.2.9",
+    "typescript": "^3.9.7"
+  },
+  "dependencies": {
+    "@types/cors": "^2.8.6",
+    "@types/express": "^4.17.7",
+    "@types/serialport": "^8.0.1",
+    "@types/ws": "^7.2.6",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "pug": "^3.0.0",
+    "serialport": "^9.0.0",
+    "ws": "^7.3.1"
+  }
+}

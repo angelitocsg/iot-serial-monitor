@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Multi Serial Monitor</title>
+    <link rel="icon" href="data:;base64,iVBORw0KGgo=" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/purecss@2.0.3/build/pure-min.css"
+      integrity="sha384-cg6SkqEOCV1NbJoCu11+bm0NvBRc8IYLRGXkmNrqUBfTjmMYwNKPWBTIKyw9mHNJ"
+      crossorigin="anonymous"
+    />
+    <script src="https://momentjs.com/downloads/moment.js"></script>
+    <script>
+      const mySocket = new WebSocket('ws://localhost:3000');
+      mySocket.onmessage = (event) => {
+        const _message = JSON.parse(event.data);
+        let box = undefined;
+
+        if (_message.id === 0) {
+          box = document.getElementById('databox0');
+        }
+
+        if (_message.id === 1) {
+          box = document.getElementById('databox1');
+        }
+
+        if (!!box) {
+          box.innerHTML = `<pre>${moment().format('mm:ss:SSS')} ${_message.content}</pre>${
+            box.innerHTML
+          }`;
+        }
+      };
+
+      const onConnect = (id) => {
+        const form = document.forms[id];
+        const formData = new FormData(form);
+        const portName = formData.get('portName');
+        mySocket.send(JSON.stringify({ portName }));
+      };
+    </script>
+    <style>
+      body {
+        padding: 15px;
+      }
+      pre {
+        font-size: 8pt;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Multi Serial Monitor</h1>
+    <div class="pure-g">
+      <div class="pure-u-11-24">
+        <form class="pure-form" onsubmit="return false">
+          <fieldset>
+            <select name="portName">
+              <script>
+                {
+                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) =>
+                    document.writeln(`<option value="COM${index}">COM${index}</option>`),
+                  );
+                }
+              </script>
+            </select>
+            <button type="button" onclick="onConnect(0)" class="pure-button pure-button-primary">
+              Connect
+            </button>
+            <button type="button" class="pure-button pure-button-primary">
+              Disconnect
+            </button>
+          </fieldset>
+          <legend>Serial port #1</legend>
+          <div id="databox0" class="data-box"></div>
+        </form>
+      </div>
+
+      <div class="pure-u-2-24"></div>
+
+      <div class="pure-u-11-24">
+        <form class="pure-form" onsubmit="return false">
+          <fieldset>
+            <select name="portName">
+              <script>
+                {
+                  [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) =>
+                    document.writeln(`<option value="COM${index}">COM${index}</option>`),
+                  );
+                }
+              </script>
+            </select>
+            <button type="button" onclick="onConnect(1)" class="pure-button pure-button-primary">
+              Connect
+            </button>
+            <button type="button" class="pure-button pure-button-primary">
+              Disconnect
+            </button>
+          </fieldset>
+          <legend>Serial port #2</legend>
+          <div id="databox1" class="data-box"></div>
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
