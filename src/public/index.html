@@ -33,24 +33,57 @@
         }
       };
 
+      const onConnectAll = () => {
+        onConnect(0);
+        onConnect(1);
+      };
+
       const onConnect = (id) => {
         const form = document.forms[id];
         const formData = new FormData(form);
         const portName = formData.get('portName');
+        setPort(id);
         mySocket.send(JSON.stringify({ portName }));
       };
+
+      const setPort = (id) => {
+        console.log('setPort', id);
+        const form = document.forms[id];
+        const formData = new FormData(form);
+        const portName = formData.get('portName');
+        localStorage.setItem(`port${id}`, portName);
+      };
+
+      const getPort = (id) => {
+        console.log('getPort', id);
+        return localStorage.getItem(`port${id}`);
+      };
+
+      const port0 = getPort(0);
+      const port1 = getPort(1);
     </script>
     <style>
       body {
         padding: 15px;
       }
       pre {
-        font-size: 8pt;
+        font-size: 7pt;
+      }
+      .data-box {
+        overflow: auto;
+      }
+      .button-warning {
+        background: rgb(223, 117, 20);
       }
     </style>
   </head>
   <body>
-    <h1>Multi Serial Monitor</h1>
+    <h1>
+      Multi Serial Monitor
+      <button type="button" onclick="onConnectAll()" class="pure-button button-warning">
+        Connect all
+      </button>
+    </h1>
     <div class="pure-g">
       <div class="pure-u-11-24">
         <form class="pure-form" onsubmit="return false">
@@ -59,7 +92,11 @@
               <script>
                 {
                   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) =>
-                    document.writeln(`<option value="COM${index}">COM${index}</option>`),
+                    document.writeln(
+                      `<option value="COM${index}" ${
+                        port0 === `COM${index}` ? 'selected' : ''
+                      }>COM${index}</option>`,
+                    ),
                   );
                 }
               </script>
@@ -67,9 +104,7 @@
             <button type="button" onclick="onConnect(0)" class="pure-button pure-button-primary">
               Connect
             </button>
-            <button type="button" class="pure-button pure-button-primary">
-              Disconnect
-            </button>
+            <button type="button" class="pure-button pure-button-primary">Disconnect</button>
           </fieldset>
           <legend>Serial port #1</legend>
           <div id="databox0" class="data-box"></div>
@@ -85,7 +120,11 @@
               <script>
                 {
                   [1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((index) =>
-                    document.writeln(`<option value="COM${index}">COM${index}</option>`),
+                    document.writeln(
+                      `<option value="COM${index}" ${
+                        port1 === `COM${index}` ? 'selected' : ''
+                      }>COM${index}</option>`,
+                    ),
                   );
                 }
               </script>
@@ -93,9 +132,7 @@
             <button type="button" onclick="onConnect(1)" class="pure-button pure-button-primary">
               Connect
             </button>
-            <button type="button" class="pure-button pure-button-primary">
-              Disconnect
-            </button>
+            <button type="button" class="pure-button pure-button-primary">Disconnect</button>
           </fieldset>
           <legend>Serial port #2</legend>
           <div id="databox1" class="data-box"></div>
